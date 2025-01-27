@@ -3,8 +3,7 @@ package vanish
 import "github.com/team-vesperis/vesperis-proxy/database"
 
 func IsPlayerVanished(playerId string) bool {
-	data := database.GetPlayerData(playerId)
-	vanished, ok := data["vanished"].(bool)
+	vanished, ok := database.GetPlayerDataField(playerId, "vanished").(bool)
 	if !ok {
 		vanished = false
 		SetPlayerVanished(playerId, false)
@@ -14,7 +13,5 @@ func IsPlayerVanished(playerId string) bool {
 }
 
 func SetPlayerVanished(playerId string, vanished bool) {
-	data := database.GetPlayerData(playerId)
-	data["vanished"] = vanished
-	database.SavePlayerData(playerId, data)
+	database.SetPlayerDataField(playerId, "vanished", vanished)
 }

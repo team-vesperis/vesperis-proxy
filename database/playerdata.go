@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 )
 
-func SavePlayerData(playerId string, playerData map[string]interface{}) {
+func SetPlayerData(playerId string, playerData map[string]interface{}) {
 	redis := getRedisConnection()
 	mysql, errConnection := getMySQLConnection(context.Background())
 	if errConnection != nil {
@@ -33,7 +33,7 @@ func SavePlayerData(playerId string, playerData map[string]interface{}) {
 	}
 }
 
-func SavePlayerDataField(playerId, field string, value interface{}) {
+func SetPlayerDataField(playerId, field string, value interface{}) {
 	redis := getRedisConnection()
 	mysql, errConnection := getMySQLConnection(context.Background())
 	if errConnection != nil {
@@ -84,7 +84,7 @@ func GetPlayerDataField(playerId, field string) interface{} {
 		// no data found -> create new data
 		if err == sql.ErrNoRows {
 			emptyData := make(map[string]interface{})
-			SavePlayerData(playerId, emptyData)
+			SetPlayerData(playerId, emptyData)
 			return nil
 		}
 
@@ -132,7 +132,7 @@ func GetPlayerData(playerId string) map[string]interface{} {
 			logger.Warn("No player data found in MySQL for player: ", playerId)
 			// Create new empty data
 			emptyData := make(map[string]interface{})
-			SavePlayerData(playerId, emptyData)
+			SetPlayerData(playerId, emptyData)
 			return emptyData
 		}
 		logger.Error("Error getting player data from the MySQL database. - ", err)

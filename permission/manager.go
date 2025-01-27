@@ -24,6 +24,7 @@ var validRanks = map[string]struct{}{
 
 func InitializePermissionManager(log *zap.SugaredLogger) {
 	logger = log
+	logger.Info("Initialized Permission Manager.")
 }
 
 func GetPlayerRole(playerId string) string {
@@ -51,7 +52,7 @@ func SetPlayerRole(playerId, role string) {
 		return
 	}
 
-	database.SavePlayerDataField(playerId, "role", role)
+	database.SetPlayerDataField(playerId, "role", role)
 
 	playerName := utils.PlayerNameFromPlayerId(playerId)
 	logger.Info("Changed permission role for " + playerName + " - " + playerId + " to " + role)
@@ -87,7 +88,7 @@ func SetPlayerRank(playerId, rank string) {
 		return
 	}
 
-	database.SavePlayerDataField(playerId, "rank", rank)
+	database.SetPlayerDataField(playerId, "rank", rank)
 
 	playerName := utils.PlayerNameFromPlayerId(playerId)
 	logger.Info("Changed permission rank for " + playerName + " - " + playerId + " to " + rank)
