@@ -7,15 +7,10 @@ import (
 )
 
 func SetPlayerData(playerId string, playerData map[string]interface{}) {
-	redis := getRedisConnection()
-	mysql, errConnection := getMySQLConnection(context.Background())
-	if errConnection != nil {
-		return
-	}
-	defer mysql.Close()
-
 	// redis
-	redisKey := "player:" + playerId
+	redis := getRedisClient()
+	redisKey := "player_data:" + playerId
+
 	for key, value := range playerData {
 		jsonValue, _ := json.Marshal(value)
 
@@ -26,23 +21,24 @@ func SetPlayerData(playerId string, playerData map[string]interface{}) {
 	}
 
 	// mysql
+	mysql, err := getMySQLConnection(context.Background())
+	if err != nil {
+		return
+	}
+	defer mysql.Close()
+
 	jsonData, _ := json.Marshal(playerData)
-	_, err := mysql.ExecContext(context.Background(), "REPLACE INTO player_data (playerId, data) VALUES (?, ?)", playerId, string(jsonData))
+	_, err = mysql.ExecContext(context.Background(), "REPLACE INTO player_data (playerId, data) VALUES (?, ?)", playerId, string(jsonData))
 	if err != nil {
 		logger.Error("Error saving player data to the MySQL database. - ", err)
 	}
 }
 
 func SetPlayerDataField(playerId, field string, value interface{}) {
-	redis := getRedisConnection()
-	mysql, errConnection := getMySQLConnection(context.Background())
-	if errConnection != nil {
-		return
-	}
-	defer mysql.Close()
-
 	// redis
-	redisKey := "player:" + playerId
+	redis := getRedisClient()
+	redisKey := "player_data:" + playerId
+
 	jsonValue, _ := json.Marshal(value)
 	err := redis.HSet(context.Background(), redisKey, field, jsonValue).Err()
 	if err != nil {
@@ -50,6 +46,12 @@ func SetPlayerDataField(playerId, field string, value interface{}) {
 	}
 
 	// mysql
+	mysql, err := getMySQLConnection(context.Background())
+	if err != nil {
+		return
+	}
+	defer mysql.Close()
+
 	playerData := GetPlayerData(playerId)
 	playerData[field] = value
 	jsonData, _ := json.Marshal(playerData)
@@ -60,15 +62,10 @@ func SetPlayerDataField(playerId, field string, value interface{}) {
 }
 
 func GetPlayerDataField(playerId, field string) interface{} {
-	redis := getRedisConnection()
-	mysql, errConnection := getMySQLConnection(context.Background())
-	if errConnection != nil {
-		return nil
-	}
-	defer mysql.Close()
-
 	// redis
-	redisKey := "player:" + playerId
+	redis := getRedisClient()
+	redisKey := "player_data:" + playerId
+
 	value, err := redis.HGet(context.Background(), redisKey, field).Result()
 	if err == nil {
 		var result interface{}
@@ -77,6 +74,12 @@ func GetPlayerDataField(playerId, field string) interface{} {
 	}
 
 	// mysql
+	mysql, err := getMySQLConnection(context.Background())
+	if err != nil {
+		return nil
+	}
+	defer mysql.Close()
+
 	var jsonData string
 	err = mysql.QueryRowContext(context.Background(), "SELECT data FROM player_data WHERE playerId = ?", playerId).Scan(&jsonData)
 	if err != nil {
@@ -104,15 +107,10 @@ func GetPlayerDataField(playerId, field string) interface{} {
 }
 
 func GetPlayerData(playerId string) map[string]interface{} {
-	redis := getRedisConnection()
-	mysql, errConnection := getMySQLConnection(context.Background())
-	if errConnection != nil {
-		return nil
-	}
-	defer mysql.Close()
-	redisKey := "player:" + playerId
-
 	// redis
+	redis := getRedisClient()
+	redisKey := "player_data:" + playerId
+
 	redisData, err := redis.HGetAll(context.Background(), redisKey).Result()
 	if err == nil && len(redisData) > 0 {
 		playerData := make(map[string]interface{})
@@ -125,6 +123,12 @@ func GetPlayerData(playerId string) map[string]interface{} {
 	}
 
 	// mysql
+	mysql, err := getMySQLConnection(context.Background())
+	if err != nil {
+		return nil
+	}
+	defer mysql.Close()
+
 	var jsonData string
 	err = mysql.QueryRowContext(context.Background(), "SELECT data FROM player_data WHERE playerId = ?", playerId).Scan(&jsonData)
 	if err != nil {

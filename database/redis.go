@@ -5,12 +5,11 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"github.com/team-vesperis/vesperis-proxy/config"
-	"go.uber.org/zap"
 )
 
 var client *redis.Client
 
-func initializeRedis(logger *zap.SugaredLogger) {
+func initializeRedis() {
 	opt, urlError := redis.ParseURL(config.GetRedisUrl())
 	if urlError != nil {
 		logger.Panic("Error parsing url in the Redis Database. - ", urlError)
@@ -32,6 +31,15 @@ func initializeRedis(logger *zap.SugaredLogger) {
 	logger.Info("Successfully initialized the Redis Database.")
 }
 
-func getRedisConnection() *redis.Conn {
-	return client.Conn()
+func getRedisClient() *redis.Client {
+	if client == nil {
+		logger.Error("Redis client not found.")
+	}
+	return client
+}
+
+func closeRedis() {
+	if client != nil {
+		client.Close()
+	}
 }

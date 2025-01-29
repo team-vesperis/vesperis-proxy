@@ -37,7 +37,8 @@ func GetMySQLUrl() string {
 		":" +
 		config.GetString("databases.mysql.port") +
 		")/" +
-		config.GetString("databases.mysql.database")
+		config.GetString("databases.mysql.database") +
+		"?parseTime=true"
 }
 
 func GetRedisUrl() string {

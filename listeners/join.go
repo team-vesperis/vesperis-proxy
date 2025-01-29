@@ -1,7 +1,11 @@
 package listeners
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/robinbraemer/event"
+	"github.com/team-vesperis/vesperis-proxy/ban"
 	"github.com/team-vesperis/vesperis-proxy/permission"
 	"go.minekube.com/common/minecraft/color"
 	"go.minekube.com/common/minecraft/component"
@@ -18,8 +22,56 @@ func registerJoinListener() {
 
 func onLogin() func(*proxy.LoginEvent) {
 	return func(event *proxy.LoginEvent) {
+		player := event.Player()
 
-		// TODO: check if player is banned -> refuse login
+		if ban.IsPlayerBanned(player) {
+			reason := ban.GetBanReason(player)
+
+			if ban.IsPlayerPermanentlyBanned(player) {
+				event.Deny(&component.Text{
+					Content: "You are permanently banned from VesperisMC.",
+					S: component.Style{
+						Color: color.Red,
+					},
+					Extra: []component.Component{
+						&component.Text{
+							Content: "\n\nReason: " + reason,
+							S: component.Style{
+								Color: color.Gray,
+							},
+						},
+					},
+				})
+			} else {
+				duration := time.Until(ban.GetBanExpiration(player))
+				hours := int(duration.Hours())
+				days := hours / 24
+				hours = hours % 24
+				minutes := int(duration.Minutes()) % 60
+				seconds := int(duration.Seconds()) % 60
+
+				event.Deny(&component.Text{
+					Content: "You are temporarily banned from VesperisMC",
+					S: component.Style{
+						Color: color.Red,
+					},
+					Extra: []component.Component{
+						&component.Text{
+							Content: "\n\nReason: " + reason,
+							S: component.Style{
+								Color: color.Gray,
+							},
+						},
+						&component.Text{
+							Content: "\n\nYou are still banned for " + fmt.Sprintf("%d days, %d hours, %d minutes and %d seconds", days, hours, minutes, seconds),
+							S: component.Style{
+								Color: color.Aqua,
+							},
+						},
+					},
+				})
+			}
+		}
 	}
 }
 

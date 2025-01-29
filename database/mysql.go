@@ -7,14 +7,11 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/team-vesperis/vesperis-proxy/config"
-	"go.uber.org/zap"
 )
 
 var database *sql.DB
-var logger *zap.SugaredLogger
 
-func initializeMysql(log *zap.SugaredLogger) {
-	logger = log
+func initializeMysql() {
 	var err error
 	database, err = sql.Open("mysql", config.GetMySQLUrl())
 	if err != nil {
@@ -46,17 +43,39 @@ func getMySQLConnection(context context.Context) (*sql.Conn, error) {
 
 func createTables() error {
 	_, err := database.Exec(`
-    	CREATE TABLE IF NOT EXISTS player_data (
-    		playerId VARCHAR(36) PRIMARY KEY,
-    		data JSON
+		CREATE TABLE IF NOT EXISTS player_data (
+			playerId VARCHAR(36) PRIMARY KEY,
+			data JSON
 		);
 	`)
 
 	if err != nil {
-		logger.Panic("Error creating player_data table. - ", err)
+		logger.Panic("Error creating/loading player_data table. - ", err)
+		return err
+	}
+
+	_, err = database.Exec(`
+		CREATE TABLE IF NOT EXISTS banned_players (
+    		playerId VARCHAR(36) PRIMARY KEY,
+    		playerName VARCHAR(16),
+    		reason TINYTEXT,
+    		permanently BOOL,
+    		ban_issued TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    		ban_expires TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		);
+	`)
+
+	if err != nil {
+		logger.Panic("Error creating/loading banned_players table. - ", err)
 		return err
 	}
 
 	logger.Info("Successfully created/loaded MySQL table.")
 	return nil
+}
+
+func closeMySQL() {
+	if database != nil {
+		database.Close()
+	}
 }

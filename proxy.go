@@ -4,7 +4,10 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
+	"github.com/team-vesperis/vesperis-proxy/ban"
 	"github.com/team-vesperis/vesperis-proxy/commands"
 	"github.com/team-vesperis/vesperis-proxy/config"
 	"github.com/team-vesperis/vesperis-proxy/database"
@@ -33,25 +36,40 @@ func main() {
 	}()
 
 	logger.CreateLogger()
-	log := logger.GetLogger()
-	log.Info("Starting Vesperis Proxy...")
+	logger := logger.GetLogger()
+	logger.Info("Starting Vesperis Proxy...")
 
-	config.InitializeConfig(log)
+	config.InitializeConfig(logger)
 
 	proxy.Plugins = append(proxy.Plugins,
 		proxy.Plugin{
 			Name: "VesperisProxy",
 			Init: func(ctx context.Context, proxy *proxy.Proxy) error {
-				return newVesperisProxy(proxy, log).init()
+				return newVesperisProxy(proxy, logger).init()
 			},
 		},
 	)
 
+	handleShutdown(logger)
 	gate.Execute()
 
-	log.Info("Successfully started Vesperis Proxy.")
-	fmt.Println("Press 'Enter' to exit...")
-	fmt.Scanln()
+	logger.Info("Successfully started Vesperis Proxy.")
+}
+
+func handleShutdown(logger *zap.SugaredLogger) {
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		<-stop
+		logger.Info("Stopping Vesperis Proxy...")
+
+		close(ban.Quit)
+		database.CloseDatabase()
+
+		logger.Info("Successfully stopped Vesperis Proxy.")
+		os.Exit(0)
+	}()
 }
 
 func newVesperisProxy(proxy *proxy.Proxy, logger *zap.SugaredLogger) *VesperisProxy {
@@ -66,6 +84,7 @@ func (vp *VesperisProxy) init() error {
 
 	permission.InitializePermissionManager(vp.logger)
 	utils.InitializeUtils(vp.Proxy, vp.logger)
+	ban.InitializeBanManager(vp.logger)
 
 	vp.registerCommands()
 	vp.registerEvents()

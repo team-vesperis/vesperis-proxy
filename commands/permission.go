@@ -27,10 +27,10 @@ func permissionCommand(name string) brigodier.LiteralNodeBuilder {
 						Executes(setRole("default"))).
 					Then(brigodier.Literal("moderator").
 						Executes(setRole("moderator"))).
-					Executes(incorrectSetUsage()).
+					Executes(incorrectPermissionCommandSetUsage()).
 					Suggests(suggestPlayers())).
-				Executes(incorrectSetUsage())).
-			Executes(incorrectSetUsage()).
+				Executes(incorrectPermissionCommandSetUsage())).
+			Executes(incorrectPermissionCommandSetUsage()).
 			Then(brigodier.Literal("rank").
 				Then(brigodier.Argument("player", brigodier.SingleWord).
 					Then(brigodier.Literal("champion").
@@ -41,9 +41,9 @@ func permissionCommand(name string) brigodier.LiteralNodeBuilder {
 						Executes(setRank("elite"))).
 					Then(brigodier.Literal("legend").
 						Executes(setRank("legend"))).
-					Executes(incorrectSetUsage()).
+					Executes(incorrectPermissionCommandSetUsage()).
 					Suggests(suggestPlayers())).
-				Executes(incorrectSetUsage())).
+				Executes(incorrectPermissionCommandSetUsage())).
 			Requires(requireAdmin())).
 		Then(brigodier.Literal("get").
 			Then(brigodier.Literal("rank").
@@ -54,8 +54,8 @@ func permissionCommand(name string) brigodier.LiteralNodeBuilder {
 				Then(brigodier.Argument("player", brigodier.SingleWord).
 					Executes(getRole()).
 					Suggests(suggestPlayers()))).
-			Executes(incorrectGetUsage())).
-		Executes(incorrectFullUsage()).
+			Executes(incorrectPermissionCommandGetUsage())).
+		Executes(incorrectPermissionCommandUsage()).
 		Requires(requireAdminOrModerator())
 }
 
@@ -187,7 +187,7 @@ func getRole() brigodier.Command {
 	})
 }
 
-func incorrectFullUsage() brigodier.Command {
+func incorrectPermissionCommandUsage() brigodier.Command {
 	return command.Command(func(context *command.Context) error {
 		context.SendMessage(&component.Text{
 			Content: "Incorrect usage:\n 1. /permission set role <player> <role>\n 2. /permission set rank <player> <rank>\n 3. /permission get role <player>\n 4. /permission get rank <player>",
@@ -197,7 +197,7 @@ func incorrectFullUsage() brigodier.Command {
 	})
 }
 
-func incorrectSetUsage() brigodier.Command {
+func incorrectPermissionCommandSetUsage() brigodier.Command {
 	return command.Command(func(context *command.Context) error {
 		context.SendMessage(&component.Text{
 			Content: "Incorrect usage: /permission set role/rank <player> <role/rank>",
@@ -207,7 +207,7 @@ func incorrectSetUsage() brigodier.Command {
 	})
 }
 
-func incorrectGetUsage() brigodier.Command {
+func incorrectPermissionCommandGetUsage() brigodier.Command {
 	return command.Command(func(context *command.Context) error {
 		context.SendMessage(&component.Text{
 			Content: "Incorrect usage: /permission get <player>",

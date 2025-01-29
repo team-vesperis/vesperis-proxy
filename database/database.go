@@ -4,10 +4,17 @@ import (
 	"go.uber.org/zap"
 )
 
+var logger *zap.SugaredLogger
+
 func InitializeDatabase(log *zap.SugaredLogger) {
 	logger = log
 	logger.Info("Initializing databases...")
 
-	initializeMysql(logger)
-	initializeRedis(logger)
+	initializeMysql()
+	initializeRedis()
+}
+
+func CloseDatabase() {
+	closeMySQL()
+	closeRedis()
 }

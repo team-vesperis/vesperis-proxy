@@ -21,6 +21,9 @@ func InitializeCommands(pr *proxy.Proxy, log *zap.SugaredLogger) {
 	logger = log
 	registerPermissionCommand()
 	registerVanishCommand()
+	registerBanCommand()
+	registerTempBanCommand()
+	registerUnBanCommand()
 }
 
 func requireAdmin() brigodier.RequireFn {
