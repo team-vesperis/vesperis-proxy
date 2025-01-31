@@ -41,7 +41,12 @@ func IsPlayerPermanentlyBanned(player proxy.Player) bool {
 }
 
 func GetBanReason(player proxy.Player) string {
-	return database.GetBanReason(player.ID().String())
+	reason := database.GetBanReason(player.ID().String())
+	if reason == "" {
+		return "No reason provided."
+	}
+
+	return reason
 }
 
 func BanPlayer(player proxy.Player, reason string) {
