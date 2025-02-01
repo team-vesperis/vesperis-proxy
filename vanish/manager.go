@@ -1,17 +1,24 @@
 package vanish
 
-import "github.com/team-vesperis/vesperis-proxy/database"
+import (
+	"github.com/team-vesperis/vesperis-proxy/database"
+	"go.minekube.com/gate/pkg/edition/java/proxy"
+)
 
-func IsPlayerVanished(playerId string) bool {
+func IsPlayerVanished(player proxy.Player) bool {
+	playerId := player.ID().String()
+
 	vanished, ok := database.GetPlayerDataField(playerId, "vanished").(bool)
 	if !ok {
 		vanished = false
-		SetPlayerVanished(playerId, false)
+		SetPlayerVanished(player, false)
 	}
 
 	return vanished
 }
 
-func SetPlayerVanished(playerId string, vanished bool) {
+func SetPlayerVanished(player proxy.Player, vanished bool) {
+	playerId := player.ID().String()
+
 	database.SetPlayerDataField(playerId, "vanished", vanished)
 }

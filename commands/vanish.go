@@ -36,7 +36,7 @@ func checkIfVanished() brigodier.Command {
 			return nil
 		}
 
-		vanished := vanish.IsPlayerVanished(player.ID().String())
+		vanished := vanish.IsPlayerVanished(player)
 		if vanished {
 			player.SendMessage(&component.Text{
 				Content: "You are vanished.",
@@ -71,7 +71,7 @@ func turnVanishOn() brigodier.Command {
 			return nil
 		}
 
-		if vanish.IsPlayerVanished(player.ID().String()) {
+		if vanish.IsPlayerVanished(player) {
 			player.SendMessage(&component.Text{
 				Content: "You are already vanished.",
 				S: component.Style{
@@ -82,7 +82,7 @@ func turnVanishOn() brigodier.Command {
 			return nil
 		}
 
-		vanish.SetPlayerVanished(player.ID().String(), true)
+		vanish.SetPlayerVanished(player, true)
 		player.SendMessage(&component.Text{
 			Content: "You have vanished.",
 			S: component.Style{
@@ -108,7 +108,7 @@ func turnVanishOff() brigodier.Command {
 			return nil
 		}
 
-		if !vanish.IsPlayerVanished(player.ID().String()) {
+		if !vanish.IsPlayerVanished(player) {
 			player.SendMessage(&component.Text{
 				Content: "You are not vanished.",
 				S: component.Style{
@@ -119,7 +119,7 @@ func turnVanishOff() brigodier.Command {
 			return nil
 		}
 
-		vanish.SetPlayerVanished(player.ID().String(), false)
+		vanish.SetPlayerVanished(player, false)
 		player.SendMessage(&component.Text{
 			Content: "You have un-vanished.",
 			S: component.Style{

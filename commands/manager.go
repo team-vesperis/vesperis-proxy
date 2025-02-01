@@ -98,7 +98,7 @@ func suggestPlayers() brigodier.SuggestionProvider {
 		players := make([]proxy.Player, 0)
 		for _, player := range p.Players() {
 			if sourcePlayer, ok := context.Source.(proxy.Player); ok {
-				if permission.IsPlayerPrivileged(sourcePlayer) || vanish.IsPlayerVanished(player.ID().String()) {
+				if permission.IsPlayerPrivileged(sourcePlayer) || vanish.IsPlayerVanished(player) {
 					if strings.HasPrefix(strings.ToLower(player.Username()), remaining) {
 						players = append(players, player)
 					}
