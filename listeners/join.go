@@ -78,8 +78,8 @@ func onLogin() func(*proxy.LoginEvent) {
 func onSpawn() func(*proxy.PostLoginEvent) {
 	return func(event *proxy.PostLoginEvent) {
 		player := event.Player()
-		role := permission.GetPlayerRole(player.ID().String())
-		rank := permission.GetPlayerRank(player.ID().String())
+		role := permission.GetPlayerRole(player)
+		rank := permission.GetPlayerRank(player)
 
 		player.SendMessage(&component.Text{
 			Content: "Welcome to VesperisMC",

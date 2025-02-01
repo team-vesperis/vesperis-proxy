@@ -33,7 +33,7 @@ func banPlayer() brigodier.Command {
 			return nil
 		}
 
-		if permission.GetPlayerRole(player.ID().String()) == "admin" {
+		if permission.GetPlayerRole(player) == "admin" {
 			context.SendMessage(&component.Text{
 				Content: "You are not allowed to ban admins.",
 				S: component.Style{

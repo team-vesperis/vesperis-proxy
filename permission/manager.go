@@ -2,7 +2,7 @@ package permission
 
 import (
 	"github.com/team-vesperis/vesperis-proxy/database"
-	"github.com/team-vesperis/vesperis-proxy/utils"
+	"go.minekube.com/gate/pkg/edition/java/proxy"
 	"go.uber.org/zap"
 )
 
@@ -27,11 +27,13 @@ func InitializePermissionManager(log *zap.SugaredLogger) {
 	logger.Info("Initialized Permission Manager.")
 }
 
-func GetPlayerRole(playerId string) string {
+func GetPlayerRole(player proxy.Player) string {
+	playerId := player.ID().String()
+
 	roleInterface := database.GetPlayerDataField(playerId, "role")
 	role := "default"
 	if roleInterface == nil {
-		SetPlayerRole(playerId, "default")
+		SetPlayerRole(player, "default")
 	} else {
 		role = roleInterface.(string)
 	}
@@ -39,13 +41,15 @@ func GetPlayerRole(playerId string) string {
 	_, valid := validRoles[role]
 	if !valid {
 		role = "default"
-		SetPlayerRole(playerId, "default")
+		SetPlayerRole(player, "default")
 	}
 
 	return role
 }
 
-func SetPlayerRole(playerId, role string) {
+func SetPlayerRole(player proxy.Player, role string) {
+	playerId := player.ID().String()
+
 	_, valid := validRoles[role]
 	if !valid {
 		logger.Error("Invalid role: ", role)
@@ -53,21 +57,21 @@ func SetPlayerRole(playerId, role string) {
 	}
 
 	database.SetPlayerDataField(playerId, "role", role)
-
-	playerName := utils.PlayerNameFromPlayerId(playerId)
-	logger.Info("Changed permission role for " + playerName + " - " + playerId + " to " + role)
+	logger.Info("Changed permission role for " + player.Username() + " - " + playerId + " to " + role)
 }
 
-func IsPlayerPrivileged(playerId string) bool {
-	role := GetPlayerRole(playerId)
+func IsPlayerPrivileged(player proxy.Player) bool {
+	role := GetPlayerRole(player)
 	return role == "admin" || role == "builder" || role == "moderator"
 }
 
-func GetPlayerRank(playerId string) string {
+func GetPlayerRank(player proxy.Player) string {
+	playerId := player.ID().String()
+
 	rankInterface := database.GetPlayerDataField(playerId, "rank")
 	rank := "default"
 	if rankInterface == nil {
-		SetPlayerRank(playerId, "default")
+		SetPlayerRank(player, "default")
 	} else {
 		rank = rankInterface.(string)
 	}
@@ -75,13 +79,15 @@ func GetPlayerRank(playerId string) string {
 	_, valid := validRanks[rank]
 	if !valid {
 		rank = "default"
-		SetPlayerRank(playerId, "default")
+		SetPlayerRank(player, "default")
 	}
 
 	return rank
 }
 
-func SetPlayerRank(playerId, rank string) {
+func SetPlayerRank(player proxy.Player, rank string) {
+	playerId := player.ID().String()
+
 	_, valid := validRanks[rank]
 	if !valid {
 		logger.Error("Invalid rank: ", rank)
@@ -89,7 +95,5 @@ func SetPlayerRank(playerId, rank string) {
 	}
 
 	database.SetPlayerDataField(playerId, "rank", rank)
-
-	playerName := utils.PlayerNameFromPlayerId(playerId)
-	logger.Info("Changed permission rank for " + playerName + " - " + playerId + " to " + rank)
+	logger.Info("Changed permission rank for " + player.Username() + " - " + playerId + " to " + rank)
 }

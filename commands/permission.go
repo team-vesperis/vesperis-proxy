@@ -67,7 +67,7 @@ func setRole(role string) brigodier.Command {
 			return nil
 		}
 
-		permission.SetPlayerRole(player.ID().String(), role)
+		permission.SetPlayerRole(player, role)
 		context.SendMessage(&component.Text{
 			Content: "Set role for player ",
 			S:       component.Style{Color: color.Green},
@@ -99,7 +99,7 @@ func setRank(rank string) brigodier.Command {
 			return nil
 		}
 
-		permission.SetPlayerRank(player.ID().String(), rank)
+		permission.SetPlayerRank(player, rank)
 		context.SendMessage(&component.Text{
 			Content: "Set rank for player ",
 			S:       component.Style{Color: color.Green},
@@ -131,7 +131,7 @@ func getRank() brigodier.Command {
 			return nil
 		}
 
-		rank := permission.GetPlayerRank(player.ID().String())
+		rank := permission.GetPlayerRank(player)
 		context.SendMessage(&component.Text{
 			Content: "The rank of ",
 			S:       component.Style{Color: color.Green},
@@ -163,7 +163,7 @@ func getRole() brigodier.Command {
 			return nil
 		}
 
-		role := permission.GetPlayerRole(player.ID().String())
+		role := permission.GetPlayerRole(player)
 		context.SendMessage(&component.Text{
 			Content: "The role of ",
 			S:       component.Style{Color: color.Green},
