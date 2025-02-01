@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"github.com/team-vesperis/vesperis-proxy/utils"
 	"github.com/team-vesperis/vesperis-proxy/vanish"
 	"go.minekube.com/brigodier"
 	"go.minekube.com/common/minecraft/color"
@@ -27,7 +28,7 @@ func checkIfVanished() brigodier.Command {
 		player := getPlayerFromSource(context.Source)
 		if player == nil {
 			context.SendMessage(&component.Text{
-				Content: "Only players can check if there vanished.",
+				Content: "Only players can use the /vanish command.",
 				S: component.Style{
 					Color: color.Red,
 				},
@@ -41,14 +42,14 @@ func checkIfVanished() brigodier.Command {
 			player.SendMessage(&component.Text{
 				Content: "You are vanished.",
 				S: component.Style{
-					Color: color.LightPurple,
+					Color: color.Aqua,
 				},
 			})
 		} else {
 			player.SendMessage(&component.Text{
 				Content: "You are not vanished.",
 				S: component.Style{
-					Color: color.LightPurple,
+					Color: color.Aqua,
 				},
 			})
 		}
@@ -62,7 +63,7 @@ func turnVanishOn() brigodier.Command {
 		player := getPlayerFromSource(context.Source)
 		if player == nil {
 			context.SendMessage(&component.Text{
-				Content: "Only players can use the /vanish on command.",
+				Content: "Only players can use the /vanish command.",
 				S: component.Style{
 					Color: color.Red,
 				},
@@ -75,7 +76,7 @@ func turnVanishOn() brigodier.Command {
 			player.SendMessage(&component.Text{
 				Content: "You are already vanished.",
 				S: component.Style{
-					Color: color.LightPurple,
+					Color: utils.GetColorOrange(),
 				},
 			})
 
@@ -99,7 +100,7 @@ func turnVanishOff() brigodier.Command {
 		player := getPlayerFromSource(context.Source)
 		if player == nil {
 			context.SendMessage(&component.Text{
-				Content: "Only players can use the /vanish on command.",
+				Content: "Only players can use the /vanish command.",
 				S: component.Style{
 					Color: color.Red,
 				},
@@ -112,7 +113,7 @@ func turnVanishOff() brigodier.Command {
 			player.SendMessage(&component.Text{
 				Content: "You are not vanished.",
 				S: component.Style{
-					Color: color.LightPurple,
+					Color: utils.GetColorOrange(),
 				},
 			})
 
