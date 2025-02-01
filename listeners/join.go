@@ -15,7 +15,7 @@ import (
 func registerJoinListener() {
 	manager := p.Event()
 	event.Subscribe(manager, 0, onLogin())
-	event.Subscribe(manager, 0, onSpawn())
+	event.Subscribe(manager, 0, onPostLogin())
 
 	logger.Info("Registered join listeners.")
 }
@@ -42,13 +42,33 @@ func onLogin() func(*proxy.LoginEvent) {
 						},
 					},
 				})
+
 			} else {
+				timeComponent := component.Text{}
 				duration := time.Until(ban.GetBanExpiration(player))
-				hours := int(duration.Hours())
-				days := hours / 24
-				hours = hours % 24
-				minutes := int(duration.Minutes()) % 60
-				seconds := int(duration.Seconds()) % 60
+
+				if duration.Seconds() < 1 {
+					timeComponent = component.Text{
+						Content: "\n\nYour ban has just expired. Please try again in a moment.",
+						S: component.Style{
+							Color: color.Aqua,
+						},
+					}
+
+				} else {
+					hours := int(duration.Hours())
+					days := hours / 24
+					hours = hours % 24
+					minutes := int(duration.Minutes()) % 60
+					seconds := int(duration.Seconds()) % 60
+
+					timeComponent = component.Text{
+						Content: "\n\nYou are still banned for " + fmt.Sprintf("%d days, %d hours, %d minutes and %d seconds", days, hours, minutes, seconds),
+						S: component.Style{
+							Color: color.Aqua,
+						},
+					}
+				}
 
 				event.Deny(&component.Text{
 					Content: "You are temporarily banned from VesperisMC",
@@ -62,12 +82,7 @@ func onLogin() func(*proxy.LoginEvent) {
 								Color: color.Gray,
 							},
 						},
-						&component.Text{
-							Content: "\n\nYou are still banned for " + fmt.Sprintf("%d days, %d hours, %d minutes and %d seconds", days, hours, minutes, seconds),
-							S: component.Style{
-								Color: color.Aqua,
-							},
-						},
+						&timeComponent,
 					},
 				})
 			}
@@ -75,7 +90,7 @@ func onLogin() func(*proxy.LoginEvent) {
 	}
 }
 
-func onSpawn() func(*proxy.PostLoginEvent) {
+func onPostLogin() func(*proxy.PostLoginEvent) {
 	return func(event *proxy.PostLoginEvent) {
 		player := event.Player()
 		role := permission.GetPlayerRole(player)

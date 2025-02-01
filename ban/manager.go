@@ -18,7 +18,7 @@ func InitializeBanManager(log *zap.SugaredLogger) {
 	logger = log
 	logger.Info("Initialized Ban Manager.")
 
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(30 * time.Second)
 	go func() {
 		for {
 			select {
