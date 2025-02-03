@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/team-vesperis/vesperis-proxy/database"
+	"github.com/team-vesperis/vesperis-proxy/vesperis/database"
 	"go.minekube.com/common/minecraft/color"
 	"go.minekube.com/common/minecraft/component"
 	"go.minekube.com/gate/pkg/edition/java/proxy"

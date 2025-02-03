@@ -3,8 +3,8 @@ package commands
 import (
 	"strings"
 
-	"github.com/team-vesperis/vesperis-proxy/permission"
-	"github.com/team-vesperis/vesperis-proxy/vanish"
+	"github.com/team-vesperis/vesperis-proxy/vesperis/permission"
+	"github.com/team-vesperis/vesperis-proxy/vesperis/vanish"
 	"go.minekube.com/brigodier"
 	"go.minekube.com/common/minecraft/color"
 	"go.minekube.com/common/minecraft/component"
@@ -24,6 +24,7 @@ func InitializeCommands(pr *proxy.Proxy, log *zap.SugaredLogger) {
 	registerBanCommand()
 	registerTempBanCommand()
 	registerUnBanCommand()
+	registerMaintenanceCommand()
 }
 
 func requireAdmin() brigodier.RequireFn {
@@ -45,6 +46,20 @@ func requireAdminOrModerator() brigodier.RequireFn {
 		if player != nil {
 			permission := permission.GetPlayerRole(player)
 			return permission == "admin" || permission == "moderator"
+		}
+
+		return false
+
+	})
+}
+
+func requireAdminOrBuilder() brigodier.RequireFn {
+	return command.Requires(func(context *command.RequiresContext) bool {
+		player := getPlayerFromSource(context.Source)
+
+		if player != nil {
+			permission := permission.GetPlayerRole(player)
+			return permission == "admin" || permission == "builder"
 		}
 
 		return false

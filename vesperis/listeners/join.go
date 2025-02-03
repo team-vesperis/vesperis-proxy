@@ -5,15 +5,14 @@ import (
 	"time"
 
 	"github.com/robinbraemer/event"
-	"github.com/team-vesperis/vesperis-proxy/ban"
-	"github.com/team-vesperis/vesperis-proxy/permission"
+	"github.com/team-vesperis/vesperis-proxy/vesperis/ban"
+	"github.com/team-vesperis/vesperis-proxy/vesperis/permission"
 	"go.minekube.com/common/minecraft/color"
 	"go.minekube.com/common/minecraft/component"
 	"go.minekube.com/gate/pkg/edition/java/proxy"
 )
 
-func registerJoinListener() {
-	manager := p.Event()
+func registerJoinListeners() {
 	event.Subscribe(manager, 0, onLogin())
 	event.Subscribe(manager, 0, onPostLogin())
 

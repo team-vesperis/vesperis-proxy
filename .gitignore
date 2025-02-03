@@ -19,5 +19,7 @@ go.work.sum
 # env file
 .env
 
-*.yml
+config.yml
+vesperis.yml
+init.sql
 logs/

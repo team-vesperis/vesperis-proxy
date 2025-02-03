@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/team-vesperis/vesperis-proxy/permission"
+	"github.com/team-vesperis/vesperis-proxy/vesperis/permission"
 	"go.minekube.com/brigodier"
 	"go.minekube.com/common/minecraft/color"
 	"go.minekube.com/common/minecraft/component"

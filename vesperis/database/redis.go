@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/team-vesperis/vesperis-proxy/config"
+	"github.com/team-vesperis/vesperis-proxy/vesperis/config"
 )
 
 var client *redis.Client

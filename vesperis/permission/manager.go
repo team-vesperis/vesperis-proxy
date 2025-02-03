@@ -1,7 +1,7 @@
 package permission
 
 import (
-	"github.com/team-vesperis/vesperis-proxy/database"
+	"github.com/team-vesperis/vesperis-proxy/vesperis/database"
 	"go.minekube.com/gate/pkg/edition/java/proxy"
 	"go.uber.org/zap"
 )

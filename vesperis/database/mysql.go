@@ -6,7 +6,7 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/team-vesperis/vesperis-proxy/config"
+	"github.com/team-vesperis/vesperis-proxy/vesperis/config"
 )
 
 var database *sql.DB

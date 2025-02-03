@@ -1,4 +1,4 @@
-package listeners
+package utils
 
 import (
 	"go.minekube.com/gate/pkg/edition/java/proxy"
@@ -8,8 +8,9 @@ import (
 var p *proxy.Proxy
 var logger *zap.SugaredLogger
 
-func InitializeListeners(pr *proxy.Proxy, log *zap.SugaredLogger) {
+func InitializeUtils(pr *proxy.Proxy, log *zap.SugaredLogger) {
 	p = pr
 	logger = log
-	registerJoinListener()
+	initializeVersions()
+	logger.Info("Initialized utils.")
 }

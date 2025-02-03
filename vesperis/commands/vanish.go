@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"github.com/team-vesperis/vesperis-proxy/utils"
-	"github.com/team-vesperis/vesperis-proxy/vanish"
+	"github.com/team-vesperis/vesperis-proxy/vesperis/utils"
+	"github.com/team-vesperis/vesperis-proxy/vesperis/vanish"
 	"go.minekube.com/brigodier"
 	"go.minekube.com/common/minecraft/color"
 	"go.minekube.com/common/minecraft/component"
